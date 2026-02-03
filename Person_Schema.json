@@ -1,0 +1,129 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "https://disc.gsfc.nasa.gov/schemas/model.json",
+    "type": "object",
+    "required": ["ResourceID", "OrganizationName"],
+    "properties": {
+        "Version": {
+            "type": "string",
+            "description": "Indicates the release identifier. When used to indicate the release of the SPASE data model, it is a in the form \"Major.Minor.Fix\" where Major: A significant change in the architecture of the model or rewrite of the implementation. This includes major changes in design or implementation language. This number starts at 0 (zero). Minor: An addition of terms or features that require changes in documentation/external API. This number starts at 0 (zero). Fix: Any change that does not require documentation/external API changes. This number starts at 0 (zero).",
+            "default": "2.7.1"
+        },
+        "Status": {
+            "type": "string",
+            "enum": ["Completed", "Deprecated", "Ongoing", "Unavailable", "Withdrawn"],
+            "description": "Indicates the status of the resource."
+        },
+        "MetadataRightsList": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/rights"
+            },
+            "description": "Wrapper element to allow multiple rights for the metadata. Thus, rights properties may be listed as needed to record complex rights characteristics.",
+            "uniqueItems": true
+        },
+        "ResourceID": {
+            "type": "string",
+            "pattern": "[^:]+://[^/]+/.+",
+            "description": "A ResourceID is a URI that has the form \"scheme://authority/path\" where \"scheme\" is \"spase\" for those resources administered through the SPASE framework, \"authority\" is the unique identifier for the resource provider registered within the SPASE framework and \"path\" is the unique identifier of the resource within the context of the \"authority\". All ResourceIDs must be unique within the SPASE framework"
+        },
+        "NamingAuthority": {
+            "type": "string",
+            "description": "The entity or group of organizations that commissioned the creation of the resource being described (see https://spase-group.org/services/naming-authority.html for more detail)."
+        },
+        "ResourceType": {
+            "type": "string",
+            "enum": ["Annotation", "Catalog", "Collection", "DisplayData", "DisplayOutput", "Document",
+                        "Granule", "Instrument", "Model", "ModelRun", "NumericalData", "NumericalOutput",
+                        "Observatory", "Person", "Registry", "Repository", "Service", "Software"],
+            "description": "Identifiers for all SPASE resource types."
+        },
+        "ReleaseDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time when a SPASE resource is made available. The availability of a resource coincides with the release of a resource description. If the Release Date is specified as a future date, then it indicates that resource should not be made available until that time. However, this is only advisory and in practice the Release Date should be the actual date the resource description was published."
+        },
+        "PersonName": {
+            "type": "string",
+            "description": "The words used to address an individual."
+        },
+        "OrganizationName": {
+            "type": "string",
+            "description": "A unit within a company or other entity (e.g., government agency or branch of service) within which many projects are managed as a whole."
+        },
+        "Address": {
+            "type": "string",
+            "description": "Directions for finding some location written on letters or packages that are to be delivered to that location."
+        },
+        "Email": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "The electronic address at which the individual may be contacted expressed in the form \"local-part@domain\"."
+        },
+        "PhoneNumber": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "The symbols and numerals required to contact an individual by telephone. The string may contain punctuation marks such as dash \"-\" or dot \".\" to separate fields within the string."
+        },
+        "FaxNumber": {
+            "type": "string",
+            "description": "The symbols and numerals required to send a facsimile (FAX) to an individual by telephone. The string may contain punctuation marks such as dash \"-\" or dot \".\" to separate fields within the string."
+        },
+        "ORCIdentifier": {
+            "type": "string",
+            "description": "An Open Researcher Contributor (ORC) identifier which is a unique alphanumeric string assigned by a registration agency (https://orcid.org/) to identify an individual. It has the format XXXX-XXXX-XXXX-XXXX."
+        },
+        "Note": {
+            "type": "string",
+            "description": "Information which is useful or important for the understanding of a value or parameter."
+        },
+        "RORIdentifier": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "The assigned Research Organization Registry (ROR) identifier, see https://ror.org/."
+        }
+    },
+    "$defs": {
+        "rights": {
+            "type": "object",
+            "description": "Any rights information for this item. This property may be repeated to record complex rights characteristics for the same item. May be used for both metadata and dataset licenses.",
+            "properties": {
+                "SchemeURI": {
+                    "type": "string",
+                    "format": "uri",
+                    "default": "https://spdx.org/licenses/",
+                    "description": "Rights URL namespace. Text value should be 'https://spdx.org/licenses/'."
+                },
+                "RightsIdentifierScheme": {
+                    "type": "string",
+                    "default": "SPDX",
+                    "description": "Text value should be 'SPDX'"
+                },
+                "RightsIdentifier": {
+                    "type": "string",
+                    "description": "Text value should be the identifier/short name of the license."
+                },
+                "RightsURI": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Text value should be the SPDX URI of the license. Blueprint is typically (SchemeURI) + (RightsIdentifier) + '.html'."
+                },
+                "RightsName": {
+                    "type": "string",
+                    "description": "Text value should be the full name of the license."
+                },
+                "Note": {
+                    "type": "string",
+                    "description": "Information which is useful or important for the understanding of a value or parameter."
+                }
+            },
+            "required": ["RightsURI"]
+        }
+    }
+}

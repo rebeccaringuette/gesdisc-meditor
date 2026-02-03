@@ -1,0 +1,2385 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$id": "https://disc.gsfc.nasa.gov/schemas/model.json",
+    "type": "object",
+    "required": ["Version", "ResourceID", "ResourceHeader", "AccessInformation", "MeasurementType"],
+    "properties": {
+        "Version": {
+            "type": "string",
+            "description": "Indicates the release identifier. When used to indicate the release of the SPASE data model, it is a in the form \"Major.Minor.Fix\" where Major: A significant change in the architecture of the model or rewrite of the implementation. This includes major changes in design or implementation language. This number starts at 0 (zero). Minor: An addition of terms or features that require changes in documentation/external API. This number starts at 0 (zero). Fix: Any change that does not require documentation/external API changes. This number starts at 0 (zero).",
+            "default": "2.7.1"
+        },
+        "Status": {
+            "type": "string",
+            "enum": ["Completed", "Deprecated", "Ongoing", "Unavailable", "Withdrawn"],
+            "description": "Indicates the status of the resource."
+        },
+        "MetadataRightsList": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/rights"
+            },
+            "description": "Wrapper element to allow multiple rights for the metadata. Thus, rights properties may be listed as needed to record complex rights characteristics.",
+            "uniqueItems": true
+        },
+        "ResourceID": {
+            "type": "string",
+            "pattern": "[^:]+://[^/]+/.+",
+            "description": "A ResourceID is a URI that has the form \"scheme://authority/path\" where \"scheme\" is \"spase\" for those resources administered through the SPASE framework, \"authority\" is the unique identifier for the resource provider registered within the SPASE framework and \"path\" is the unique identifier of the resource within the context of the \"authority\". All ResourceIDs must be unique within the SPASE framework"
+        },
+        "NamingAuthority": {
+            "type": "string",
+            "description": "The entity or group of organizations that commissioned the creation of the resource being described (see https://spase-group.org/services/naming-authority.html for more detail)."
+        },
+        "ResourceType": {
+            "type": "string",
+            "enum": ["Annotation", "Catalog", "Collection", "DisplayData", "DisplayOutput", "Document",
+                        "Granule", "Instrument", "Model", "ModelRun", "NumericalData", "NumericalOutput",
+                        "Observatory", "Person", "Registry", "Repository", "Service", "Software"],
+            "description": "Identifiers for all SPASE resource types."
+        },
+        "ResourceHeader":{
+            "type": "object",
+            "description": "Attributes of a resource which pertain to the provider of the resource and descriptive information about the resource.",
+            "properties": {
+                            "ResourceName": {
+                                "type": "string",
+                                "description": "A short textual resource description that is sufficient for identifying the resource. It should have a one-to-one correspondence to the ResourceID of the resource."
+                            },
+                            "AlternateName": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "An alternative or shortened name used to refer to a resource. This includes acronyms, expanded names or a synonym for a resource.",
+                                "uniqueItems": true
+                            },
+                            "DOI": {
+                                "type": "string",
+                                "description": "A digital object identifier (DOI) is a unique alphanumeric string assigned by a registration agency (the International DOI Foundation) to identify content and provide a persistent link to its location on the Internet."
+                            },
+                            "ReleaseDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The date and time when a SPASE resource is made available. The availability of a resource coincides with the release of a resource description. If the Release Date is specified as a future date, then it indicates that resource should not be made available until that time. However, this is only advisory and in practice the Release Date should be the actual date the resource description was published."
+                            },
+                            "RevisionHistory":{
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/revisions"
+                                },
+                                "uniqueItems": true
+                            },
+                            "ExpirationDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The date and time when a resource is no longer available. If the Expiration Date is specified then it indicates that resource should not be made available after that time. However, this is only advisory and in practice a resource description should be unpublished to eliminate access to a resource."
+                            },
+                            "Description": {
+                                "type": "string",
+                                "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource.",
+                                "contentMediaType": "text/html"
+                            },
+                            "Acknowledgement": {
+                                "type": "string",
+                                "description": "The individual, group or organization which should be acknowledged when the data are used in or contributes to a presentation or publication."
+                            },
+                            "PublicationInfo":{
+                                "type": "object",
+                                "description": "Information required to mint a DOI for the resource being described in SPASE.",
+                                "properties": {
+                                    "Title": {
+                                        "type": "string",
+                                        "description": "The name of a published composition, set or data, images or other work."
+                                    },
+                                    "Authors": {
+                                        "type": "string",
+                                        "description": "The individuals or organizations who defined or specified a resource (document, data, images or other types of resources). Separate multiple names with a semicolon. When an author is a person use the 'last, first [, middle]' name format. Including a middle name is optional (Since 2.6.1)."
+                                    },
+                                    "PublicationDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "The date that the work (document, data, images, DOI or other types of resources) was first issued."
+                                    },
+                                    "PublishedBy": {
+                                        "type": "string",
+                                        "description": "The name or the company, organization or individual that issues the work (document, data, images or other types of resources)."
+                                    },
+                                    "LandingPageURL": {
+                                        "type": "string",
+                                        "format": "uri",
+                                        "description": "A Uniform Resource Locator (URL) to a page that provides a way to access the resource. A landing page should contain a full bibliographic citation so that a human can tell they have arrived at the correct resource, and additional information about the resource that might not be easily retrievable from the resource itself."
+                                    }
+                                },
+                                "required": ["Authors", "PublicationDate", "PublishedBy"]
+                            },
+                            "Funding": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/funder"
+                                },
+                                "uniqueItems": true
+                            },
+                            "Contact":{
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/contact"
+                                },
+                                "minItems": 1,
+                                "uniqueItems": true
+                            },
+                            "InformationURL": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/infoURL"
+                                },
+                                "uniqueItems": true
+                            },
+                            "Association":{
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/association"
+                                },
+                                "uniqueItems": true
+                            },
+                            "PriorID": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "pattern": "[^:]+://[^/]+/.+"
+                                },
+                                "description": "The old/replaced resource identifier for a resource that has been given a new resource identifier which otherwise has not been changed. For example, this can be used when a resource has been moved to a different naming authority.",
+                                "uniqueItems": true
+                            }
+            },
+            "required": ["ResourceName", "ReleaseDate", "Description", "Contact"]
+        },
+        "AccessInformation": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/accessInfo"
+            }
+        },
+        "ProcessingLevel": {
+            "type": "string",
+            "enum": ["Calibrated", "Raw", "Uncalibrated", "ValueAdded"],
+            "description": "Identifiers to characterize the amount and type of manipulation which has been applied to the sampled data."
+        },
+        "ProviderName": {
+            "type": "string",
+            "description": "The source, or original provider, of the data (for example, PDS PPI)."
+        },
+        "ProviderResourceName": {
+            "type": "string",
+            "description": "A short textual description of a resource used by the provider which may be used to identify a resource."
+        },
+        "ProviderProcessingLevel": {
+            "type": "string",
+            "description": "The provider specific information on the processing performed on the product. This should include the provider processing level designation and information about the intended use of the product. For example, if it is to be used for machine learning or other high-level applications."
+        },
+        "ProviderVersion": {
+            "type": "string",
+            "description": "Describes the release or edition of the product used by the provider. The formation rule may vary between providers. It is intended to aid in queries to the provider regarding the product."
+        },
+        "InstrumentID": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "[^:]+://[^/]+/.+"
+            },
+            "description": "The identifier of an Instrument resource."
+        },
+        "MeasurementType": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["ActivityIndex",
+                    "Dopplergram",
+                    "Dust",
+                    "ElectricField",
+                    "EnergeticParticles",
+                    "Ephemeris",
+                    "ImageIntensity",
+                    "InstrumentStatus",
+                    "IonComposition",
+                    "Irradiance",
+                    "MagneticField",
+                    "Magnetogram",
+                    "NeutralAtomImages",
+                    "NeutralGas",
+                    "Profile",
+                    "Radiance",
+                    "Spectrum",
+                    "SPICE",
+                    "ThermalPlasma",
+                    "Waves",
+                    "Waves.Active",
+                    "Waves.Passive"]
+            },
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "The enumeration of the specific measurement target (e.g., EnergeticParticles or IonComposition), method of measurement (e.g., Interferometry), or the particular compilation of measurements (e.g., a composite dataset consisting of measurements from multiple instruments or platforms, such as Dopplergram, Keogram, and ElectronColumnDensity (TEC)) that reflect a richer context (e.g., structure or dynamics) of the observational target."
+        },
+        "TemporalDescription":{
+            "type": "object",
+            "description": "A characterization of the time over which the measurement was taken.",
+            "properties": {
+                            "TimeSpan": {
+                                "type": "object",
+                                "description": "The duration of an interval in time.",
+                                "properties": {
+                                    "StartDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "The specification of a starting point in time."
+                                    },
+                                    "StopDate": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "description": "The specification of a stopping point in time."
+                                    },
+                                    "RelativeStopDate": {
+                                        "type": "string",
+                                        "format": "duration",
+                                        "description": "An indication of the nominal end date relative to the present."
+                                    },
+                                    "Note": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Information which is useful or important for the understanding of a value or parameter."
+                                    }
+                                },
+                                "required": ["StartDate"],
+                                "oneOf": [
+                                    { "type": "object", "required": ["StopDate"] },
+                                    { "type": "object", "required": ["RelativeStopDate"] }
+                                ]
+                            },
+                            "Cadence": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The nominal or most common time interval between the start of successive measurements."
+                            },
+                            "CadenceMin": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The smallest time interval between the start of successive measurements."
+                            },
+                            "CadenceMax": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The largest time interval between the start of successive measurements."
+                            },
+                            "Exposure": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The time interval over which an individual measurement is taken."
+                            },
+                            "ExposureMin": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The smallest time interval over which an individual measurement is taken."
+                            },
+                            "ExposureMax": {
+                                "type": "string",
+                                "format": "duration",
+                                "description": "The largest interval over which an individual measurement is taken."
+                            }
+            },
+            "required": ["TimeSpan"]
+        },
+        "SpectralRange": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["CaK",
+                    "ExtremeUltraviolet",
+                    "FarUltraviolet",
+                    "GammaRays",
+                    "Halpha",
+                    "HardXRays",
+                    "He10830",
+                    "He304",
+                    "Infrared",
+                    "K7699",
+                    "LBHBand",
+                    "Microwave",
+                    "NaD",
+                    "Ni6768",
+                    "Optical",
+                    "RadioFrequency",
+                    "SoftXRays",
+                    "Ultraviolet",
+                    "WhiteLight",
+                    "XRays"]
+            },
+            "uniqueItems": true,
+            "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
+        },
+        "ObservedRegion": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "enum": ["Asteroid",
+                    "Comet",
+                    "Comet.1PHalley",
+                    "Comet.26PGriggSkjellerup",
+                    "Comet.67PChuryumovGerasimenko",
+                    "Earth",
+                    "Earth.Magnetosheath",
+                    "Earth.Magnetosphere",
+                    "Earth.Magnetosphere.Magnetotail",
+                    "Earth.Magnetosphere.Main",
+                    "Earth.Magnetosphere.Plasmasphere",
+                    "Earth.Magnetosphere.Polar",
+                    "Earth.Magnetosphere.RadiationBelt",
+                    "Earth.Magnetosphere.RingCurrent",
+                    "Earth.Moon",
+                    "Earth.NearSurface.Atmosphere",
+                    "Earth.NearSurface.AuroralRegion",
+                    "Earth.NearSurface.EquatorialRegion",
+                    "Earth.NearSurface.Ionosphere",
+                    "Earth.NearSurface.Ionosphere.DRegion",
+                    "Earth.NearSurface.Ionosphere.ERegion",
+                    "Earth.NearSurface.Ionosphere.FRegion",
+                    "Earth.NearSurface.Ionosphere.Topside",
+                    "Earth.NearSurface.Mesosphere",
+                    "Earth.NearSurface.MidLatitudeRegion",
+                    "Earth.NearSurface.Plasmasphere",
+                    "Earth.NearSurface.PolarCap",
+                    "Earth.NearSurface.SouthAtlanticAnomalyRegion",
+                    "Earth.NearSurface.Stratosphere",
+                    "Earth.NearSurface.SubAuroralRegion",
+                    "Earth.NearSurface.Thermosphere",
+                    "Earth.NearSurface.Troposphere",
+                    "Earth.Surface",
+                    "Heliosphere",
+                    "Heliosphere.Heliosheath",
+                    "Heliosphere.Inner",
+                    "Heliosphere.NearEarth",
+                    "Heliosphere.Outer",
+                    "Heliosphere.Remote1AU",
+                    "Interstellar",
+                    "Jupiter",
+                    "Jupiter.Amalthea",
+                    "Jupiter.Callisto",
+                    "Jupiter.Europa",
+                    "Jupiter.Ganymede",
+                    "Jupiter.Io",
+                    "Jupiter.Magnetosphere",
+                    "Jupiter.Magnetosphere.Magnetotail",
+                    "Jupiter.Magnetosphere.Main",
+                    "Jupiter.Magnetosphere.Plasmasphere",
+                    "Jupiter.Magnetosphere.Polar",
+                    "Jupiter.Magnetosphere.RadiationBelt",
+                    "Jupiter.Magnetosphere.RingCurrent",
+                    "Mars",
+                    "Mars.Deimos",
+                    "Mars.Magnetosphere",
+                    "Mars.Magnetosphere.Magnetotail",
+                    "Mars.Magnetosphere.Main",
+                    "Mars.Magnetosphere.Plasmasphere",
+                    "Mars.Magnetosphere.Polar",
+                    "Mars.Magnetosphere.RadiationBelt",
+                    "Mars.Magnetosphere.RingCurrent",
+                    "Mars.Phobos",
+                    "Mercury",
+                    "Mercury.Magnetosphere",
+                    "Mercury.Magnetosphere.Magnetotail",
+                    "Mercury.Magnetosphere.Main",
+                    "Mercury.Magnetosphere.Plasmasphere",
+                    "Mercury.Magnetosphere.Polar",
+                    "Mercury.Magnetosphere.RadiationBelt",
+                    "Mercury.Magnetosphere.RingCurrent",
+                    "Neptune",
+                    "Neptune.Magnetosphere",
+                    "Neptune.Magnetosphere.Magnetotail",
+                    "Neptune.Magnetosphere.Main",
+                    "Neptune.Magnetosphere.Plasmasphere",
+                    "Neptune.Magnetosphere.Polar",
+                    "Neptune.Magnetosphere.RadiationBelt",
+                    "Neptune.Magnetosphere.RingCurrent",
+                    "Neptune.Proteus",
+                    "Neptune.Triton",
+                    "Pluto",
+                    "Saturn",
+                    "Saturn.Dione",
+                    "Saturn.Enceladus",
+                    "Saturn.Hyperion",
+                    "Saturn.Iapetus",
+                    "Saturn.Magnetosphere",
+                    "Saturn.Magnetosphere.Magnetotail",
+                    "Saturn.Magnetosphere.Main",
+                    "Saturn.Magnetosphere.Plasmasphere",
+                    "Saturn.Magnetosphere.Polar",
+                    "Saturn.Magnetosphere.RadiationBelt",
+                    "Saturn.Magnetosphere.RingCurrent",
+                    "Saturn.Mimas",
+                    "Saturn.Phoebe",
+                    "Saturn.Rhea",
+                    "Saturn.Tethys",
+                    "Saturn.Titan",
+                    "Sun",
+                    "Sun.Chromosphere",
+                    "Sun.Corona",
+                    "Sun.Interior",
+                    "Sun.Photosphere",
+                    "Sun.TransitionRegion",
+                    "Uranus",
+                    "Uranus.Ariel",
+                    "Uranus.Magnetosphere",
+                    "Uranus.Magnetosphere.Magnetotail",
+                    "Uranus.Magnetosphere.Main",
+                    "Uranus.Magnetosphere.Plasmasphere",
+                    "Uranus.Magnetosphere.Polar",
+                    "Uranus.Magnetosphere.RadiationBelt",
+                    "Uranus.Magnetosphere.RingCurrent",
+                    "Uranus.Miranda",
+                    "Uranus.Oberon",
+                    "Uranus.Puck",
+                    "Uranus.Titania",
+                    "Uranus.Umbriel",
+                    "Venus",
+                    "Venus.Magnetosphere",
+                    "Venus.Magnetosphere.Magnetotail",
+                    "Venus.Magnetosphere.Main",
+                    "Venus.Magnetosphere.Plasmasphere",
+                    "Venus.Magnetosphere.Polar",
+                    "Venus.Magnetosphere.RadiationBelt",
+                    "Venus.Magnetosphere.RingCurrent"]
+            },
+            "uniqueItems": true,
+            "description": "Identifiers for areas of the physical world which may be occupied or observed."
+        },
+        "SpatialCoverage": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/spatial"
+            }
+        },
+        "Caveats": {
+            "type": "string",
+            "description": "Information which may be important in the avoidance of the misuse of the resource, for instance instrument maladies, corruption or contamination."
+        },
+        "Keyword": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "uniqueItems": true,
+            "description": "A word or phrase that is relevant to the resource but does not exist in other documentary information."
+        },
+        "InputResourceID": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "[^:]+://[^/]+/.+"
+            },
+            "uniqueItems": true,
+            "description": "The resource identifier for a resource which was used to generate this resource."
+        },
+        "Parameter": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/parameter"
+            }
+        },
+        "Extension": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/extension"
+            }
+        }
+    },
+    "$defs": {
+        "association": {
+            "type": "object",
+            "description": "Attributes of a relationship a resource has with another resource.",
+            "properties": {
+                "AssociationID": {
+                    "type": "string",
+                    "pattern": "[^:]+://[^/]+/.+",
+                    "description": "The resource identifier for a resource with which this resource is closely associated."
+                },
+                "AssociationType": {
+                    "type": "string",
+                    "enum": ["ChildEventOf", "DerivedFrom", "ObservedBy", "Other", "PartOf",
+                                "RevisionOf", "SupersededBy", "Supersedes"],
+                    "description": "Identifiers for resource associations."
+                },
+                "Note": {
+                    "type": "string",
+                    "description": "Information which is useful or important for the understanding of a value or parameter."
+                }
+            },
+            "required": ["AssociationID", "AssociationType"]
+        },
+        "bin": {
+            "type": "object",
+            "properties": {
+                "BandName": {
+                    "type": "string",
+                    "description": "A common or provider assigned name for a range of values."
+                },
+                "Low": {
+                    "type": "number",
+                    "description": "The smallest value within a range of possible values."
+                },
+                "High": {
+                    "type": "number",
+                    "description": "The largest value within a range of possible values."
+                }
+            },
+            "required": ["Low", "High"]
+        },
+        "revisions": {
+            "type": "object",
+            "description": "A history of changes that improve or upgrade.",
+            "properties": {
+                "ReleaseDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The date and time when a SPASE resource is made available. The availability of a resource coincides with the release of a resource description. If the Release Date is specified as a future date, then it indicates that resource should not be made available until that time. However, this is only advisory and in practice the Release Date should be the actual date the resource description was published."
+                },
+                "Note": {
+                    "type": "string",
+                    "description": "Information which is useful or important for the understanding of a value or parameter."
+                }
+            },
+            "required": ["ReleaseDate", "Note"]
+        },
+        "element": {
+            "type": "object",
+            "description": "A component or individual unit of a multiple value quantity such as an array or vector.",
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "A language unit by which a person or thing is known."
+                },
+                "Qualifier": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "Amplitude",
+                            "Anisotropy",
+                            "Array",
+                            "AutoSpectrum",
+                            "Average",
+                            "Characteristic",
+                            "Circular",
+                            "Coherence",
+                            "Column",
+                            "Component",
+                            "Component.I",
+                            "Component.J",
+                            "Component.K",
+                            "Confidence",
+                            "Core",
+                            "CrossSpectrum",
+                            "Deviation",
+                            "Differential",
+                            "Direction",
+                            "Directional",
+                            "DirectionAngle",
+                            "DirectionAngle.AzimuthAngle",
+                            "DirectionAngle.ElevationAngle",
+                            "DirectionAngle.PolarAngle",
+                            "DirectionCosine",
+                            "DirectionCosine.I",
+                            "DirectionCosine.J",
+                            "DirectionCosine.K",
+                            "EncodedParameter",
+                            "FieldAligned",
+                            "Fit",
+                            "Group",
+                            "Halo",
+                            "ImaginaryPart",
+                            "Incident",
+                            "Integral",
+                            "Integral.Area",
+                            "Integral.Bandwidth",
+                            "Integral.SolidAngle",
+                            "Linear",
+                            "LineOfSight",
+                            "Magnitude",
+                            "MassMixingRatio",
+                            "Maximum",
+                            "Median",
+                            "Minimum",
+                            "MixingRatio",
+                            "Moment",
+                            "Parallel",
+                            "Peak",
+                            "Perpendicular",
+                            "Perturbation",
+                            "Phase",
+                            "PhaseAngle",
+                            "PowerSpectralDensity",
+                            "Projection",
+                            "Projection.IJ",
+                            "Projection.IK",
+                            "Projection.JK",
+                            "Pseudo",
+                            "Ratio",
+                            "RealPart",
+                            "Scalar",
+                            "Spectral",
+                            "StandardDeviation",
+                            "StokesParameters",
+                            "Strahl",
+                            "Superhalo",
+                            "Symmetric",
+                            "Tensor",
+                            "Total",
+                            "Trace",
+                            "Uncertainty",
+                            "Variance",
+                            "Vector"
+                        ]
+                    },
+                    "uniqueItems": true,
+                    "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                },
+                "Index": {
+                    "type": "string",
+                    "pattern": "^\\s*(-?\\d+(\\s+-?\\d+)*)\\s*$",
+                    "description": "The location of an item in an array or vector. An index can be multivalued to represent the location in a multi-dimensional object. The index of the first item is \"1\". A value of \"0\" is a wild card for all elements at the location in an array. A value of \"-1\" is a reference to the dimension at the location in the array. A \"-1\" is used when describing the attributes of the dimension, whereas \"0\" or a positive integer is used to describe attributes of individual elements."
+                },
+                "ParameterKey": {
+                    "type": "string",
+                    "description": "The name or identifier which can be used to access the parameter in the resource. The associated value is dependent on the service used to access the resource. For columnar ASCII data, use \"Column_X\" for a single-element parameter and \"Column_X-Column_Y\" for a multi-element parameter, where X and Y are the relevant column indices. The first column index is 1."
+                },
+                "Units": {
+                    "type": "string",
+                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                },
+                "UnitsConversion": {
+                    "type": "string",
+                    "description": "The multiplicative factor for converting a unit into International System of Units (SI) units. The factor is expressed in the form \"number>x\", where \"number\" is a numerical value and \"x\" is the appropriate SI units. The basic SI units are Enumerated: m (meter), N (newton), kg (kilogram), Pa (pascal), s (second), Hz (hertz), A (ampere), V (volt), K (kelvin), W (watt), rad (radian), J (joule), sr (steradian), C (coulomb), T (tesla), ohm (ohm), mho (mho or seimens), H (henry), and F (farad). Two useful units which are not SI units are: degree (angle), and unitless (no units). An example is: \"1e-9>T\" which converts the units of magnetic field data expressed in nT to Tesla. Another example is: \"1e+3>m/s\" which converts a velocity expressed in kilometers per second to meters per second."
+                },
+                "ValidMin": {
+                    "type": "string",
+                    "description": "The smallest legitimate value."
+                },
+                "ValidMax": {
+                    "type": "string",
+                    "description": "The largest legitimate value."
+                },
+                "FillValue": {
+                    "type": "string",
+                    "description": "A value that indicates that a quantity is undefined."
+                },
+                "RenderingHints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/rendering"
+                    }
+                },
+            "required": ["Name", "Index"]
+            }
+        },
+        "extension": {
+            "type": "object",
+            "properties": {
+                "anything": {
+                    "type": ["string", "number", "boolean", "object", "array", "null"]
+                }
+            },
+            "description": "A container of other metadata which is not part of the SPASE data model. The contents of this element are defined by individual usage. The organization and content are constrained by the implementation. For example, in an XML representation of the SPASE metadata the content must conform to the XML specifications."
+        },
+        "funder": {
+            "type": "object",
+            "description": "The source of financial support (funding) for the resource.",
+            "properties": {
+                "Agency": {
+                    "type": "string",
+                    "description": "The name of an organization that provides a service or funding for specific projects."
+                },
+                "Project": {
+                    "type": "string",
+                    "description": "The name of an organized activity with a stated goal or objective."
+                },
+                "AwardNumber": {
+                    "type": "string",
+                    "description": "The identifying information assigned to the financial support (funding) of a project."
+                }
+            },
+            "required": ["Agency", "Project"]
+        },
+        "infoURL": {
+            "type": "object",
+            "description": "Attributes of the method of acquiring additional information.",
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "A language unit by which a person or thing is known."
+                },
+                "URL": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Uniform Resource Locator (URL) is the global address of documents and other resources on the World Wide Web. The first part of the address indicates what protocol to use, and the second part specifies the IP address or the domain name where the resource is located followed by the pathname of the resource. A URL is specified in the form protocol://server.domain.name:port/pathname. Example protocols are HTTP or FTP, server domain name is the Internet name."
+                },
+                "Description": {
+                    "type": "string",
+                    "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource."
+                },
+                "Language": {
+                    "type": "string",
+                    "description": "The two-character indicator of language selected from the ISO 639-1 codes for the representation of names of languages."
+                }
+            },
+            "required": ["URL"]
+        },
+        "url": {
+            "type": "object",
+            "description": "Attributes of the method for accessing a resource including a URL, name and description.",
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "A language unit by which a person or thing is known."
+                },
+                "URL": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Uniform Resource Locator (URL) is the global address of documents and other resources on the World Wide Web. The first part of the address indicates what protocol to use, and the second part specifies the IP address or the domain name where the resource is located followed by the pathname of the resource. A URL is specified in the form protocol://server.domain.name:port/pathname. Example protocols are HTTP or FTP, server domain name is the Internet name."
+                },
+                "Style": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["EPNTAP", "File", "Git", "HAPI", "Listing", "Overview", "Search", "TAP", "Template", "WebService"]
+                    },
+                    "description": "Identifiers for the manner in which a response from a URL is presented."
+                },
+                "ProductKey": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A string of characters used to uniquely identify a particular product within a Repository. The style or format of the identifier is determined by the Repository. The kinds of resources which can be accessed include, but are not limited to, numerical data, display data, documents and event lists. The method to access the product is determined by the attributes of an access service."
+                },
+                "Description": {
+                    "type": "string",
+                    "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource."
+                },
+                "Language": {
+                    "type": "string",
+                    "description": "The two-character indicator of language selected from the ISO 639-1 codes for the representation of names of languages."
+                }
+            },
+            "required": ["URL"]
+        },
+        "accessInfo": {
+            "type": "object",
+            "description": "Attributes which specify how to access a resource, its availability, storage format, etc.",
+            "properties": {
+                "RepositoryID": {
+                    "type": "string",
+                    "description": "The identifier of a Repository resource."
+                },
+                "Availability": {
+                    "type": "string",
+                    "enum": ["Offline", "Online"],
+                    "description": "Identifiers for indicating the method or service which may be used to access the resource."
+                },
+                "AccessRights": {
+                    "type": "string",
+                    "enum": ["Open", "PartiallyRestricted", "Restricted"],
+                    "description": "Identifiers for permissions granted or denied by the host of a product to allow other users to access and use the resource."
+                },
+                "RightsList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/rights"
+                    },
+                    "description": "Wrapper element to allow multiple rights. Thus, rights properties may be listed as needed to record complex rights characteristics.",
+                    "uniqueItems": true
+                },
+                "AccessURL": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/url"
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                },
+                "Format": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["AVI",
+                            "Binary",
+                            "CDF",
+                            "CEF",
+                            "CEF1",
+                            "CEF2",
+                            "CSV",
+                            "Excel",
+                            "FITS",
+                            "GIF",
+                            "Hardcopy",
+                            "Hardcopy.Film",
+                            "Hardcopy.Microfiche",
+                            "Hardcopy.Microfilm",
+                            "Hardcopy.Photograph",
+                            "Hardcopy.PhotographicPlate",
+                            "Hardcopy.Print",
+                            "HDF",
+                            "HDF4",
+                            "HDF5",
+                            "HTML",
+                            "IDFS",
+                            "IDL",
+                            "JPEG",
+                            "JSON",
+                            "MATLAB_4",
+                            "MATLAB_6",
+                            "MATLAB_7",
+                            "MPEG",
+                            "NCAR",
+                            "NetCDF",
+                            "PDF",
+                            "PDS3",
+                            "PDS4",
+                            "PNG",
+                            "Postscript",
+                            "QuickTime",
+                            "RINEX2",
+                            "RINEX3",
+                            "Text",
+                            "Text.ASCII",
+                            "Text.Unicode",
+                            "TFCat",
+                            "TIFF",
+                            "UDF",
+                            "VOTable",
+                            "XML"
+                        ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "description": "The file format specification. The value is selected from a list of accepted names for known, well documented formats."
+                },
+                "Encoding": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["ASCII",
+                            "Base64",
+                            "BZIP2",
+                            "GZIP",
+                            "None",
+                            "S3_BUCKET",
+                            "TAR",
+                            "Unicode",
+                            "ZIP"
+                        ]
+                    },
+                    "uniqueItems": true,
+                    "description": "Identifiers for unambiguous rules that establishes the representation of information within a file."
+                },
+                "AccessDirectoryTemplate": {
+                    "type": "string",
+                    "description": "Directory hierarchy templates to store the patterns for the data directory structure, using the URI template specification https://github.com/hapi-server/uri-templates/wiki/Specification. This will enable automated search of files matching a time range. For example, the ACE definitive orbit dataset at NASA SPDF has yearly subdirectories for the data files following the naming pattern $Y. See links for access templates in the Bibliography."
+                },
+                "AccessFilenameTemplate": {
+                    "type": "string",
+                    "description": "Filenaming templates to store the patterns for the data filename structure, using the URI template specification https://github.com/hapi-server/uri-templates/wiki/Specification. This will enable automated search of files matching a time range. For example, the ACE definitive orbit dataset at NASA SPDF has files following the naming pattern 'ac_or_def_$Y$m$d_v$v.cdf', where $Y is the year, $m is the month, $d is the day, and $v is the version number. See links for access templates in the Bibliography."
+                },
+                "DataExtent": {
+                    "type": "object",
+                    "description": "The area of storage in a file system required to store the contents of a resource. By default, the data extent is expressed in bytes.",
+                    "properties": {
+                        "Quantity": {
+                            "type": "number",
+                            "description": "A value that describes a characteristic of a system."
+                        },
+                        "Units": {
+                            "type": "string",
+                            "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                        },
+                        "Per": {
+                            "type": "string",
+                            "format": "duration",
+                            "description": "The time interval over which a characterization applies. For example, the number of bytes generated each day."
+                        }
+                    },
+                    "required": ["Quantity"]
+                },
+                "Acknowledgement": {
+                    "type": "string",
+                    "description": "The individual, group or organization which should be acknowledged when the data are used in or contributes to a presentation or publication."
+                },
+            "required": ["RepositoryID", "Format", "AccessURL"]
+            }
+        },
+        "contact": {
+            "type": "object",
+            "description": "The person or organization who may be able to provide special assistance or serve as a channel for communication for additional information about a resource.",
+            "properties": {"PersonID": {
+                                "type": "string",
+                                "description": "The identifier assigned to a Person description."
+                            },
+                            "Role": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string",
+                                    "enum": ["ArchiveSpecialist",
+                                            "Author",
+                                            "CoInvestigator",
+                                            "Contributor",
+                                            "CoPI",
+                                            "DataProducer",
+                                            "DeputyPI",
+                                            "Developer",
+                                            "FormerPI",
+                                            "GeneralContact",
+                                            "HostContact",
+                                            "InstrumentLead",
+                                            "InstrumentScientist",
+                                            "MetadataContact",
+                                            "MissionManager",
+                                            "MissionPrincipalInvestigator",
+                                            "OperationsManager",
+                                            "PrincipalInvestigator",
+                                            "ProgramManager",
+                                            "ProgramScientist",
+                                            "ProjectEngineer",
+                                            "ProjectManager",
+                                            "ProjectScientist",
+                                            "Publisher",
+                                            "Scientist",
+                                            "TeamLeader",
+                                            "TeamMember",
+                                            "TechnicalContact",
+                                            "User"
+                                        ]
+                                },
+                                "minItems": 1,
+                                "uniqueItems": true,
+                                "description": "The assigned or assumed function or position of an individual."
+                            },
+                            "StartDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The specification of a starting point in time."
+                            },
+                            "StopDate": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "The specification of a stopping point in time."
+                            },
+                            "Note": {
+                                "type": "string",
+                                "description": "Information which is useful or important for the understanding of a value or parameter."
+                            }
+            },
+            "required": ["PersonID", "Role"]
+        },
+        "rights": {
+            "type": "object",
+            "description": "Any rights information for this item. This property may be repeated to record complex rights characteristics for the same item. May be used for both metadata and dataset licenses.",
+            "properties": {
+                "SchemeURI": {
+                    "type": "string",
+                    "format": "uri",
+                    "default": "https://spdx.org/licenses/",
+                    "description": "Rights URL namespace. Text value should be 'https://spdx.org/licenses/'."
+                },
+                "RightsIdentifierScheme": {
+                    "type": "string",
+                    "default": "SPDX",
+                    "description": "Text value should be 'SPDX'"
+                },
+                "RightsIdentifier": {
+                    "type": "string",
+                    "description": "Text value should be the identifier/short name of the license."
+                },
+                "RightsURI": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Text value should be the SPDX URI of the license. Blueprint is typically (SchemeURI) + (RightsIdentifier) + '.html'."
+                },
+                "RightsName": {
+                    "type": "string",
+                    "description": "Text value should be the full name of the license."
+                },
+                "Note": {
+                    "type": "string",
+                    "description": "Information which is useful or important for the understanding of a value or parameter."
+                }
+            },
+            "required": ["RightsURI"]
+        },
+        "spatial": {
+            "type": "object",
+            "description": "A region of space defined by the latitude, longitude and altitude in a geographic coordinate system.",
+            "properties": {
+                "CoordinateSystem": {
+                    "type": "object",
+                    "properties": {
+                        "CoordinateRepresentation": {
+                            "type": "string",
+                            "enum": ["Cartesian", "Cylindrical", "Spherical"],
+                            "description": "Identifiers of the method or form for specifying a given point or vector in a given coordinate system."
+                        },
+                        "CoordinateSystemName": {
+                            "type": "string",
+                            "enum": [
+                                "Carrington",
+                                "CGM",
+                                "CSO",
+                                "DM",
+                                "ECD",
+                                "ECEF",
+                                "ENP",
+                                "GEI",
+                                "GEO",
+                                "GPHIO",
+                                "GSE",
+                                "GSEQ",
+                                "GSM",
+                                "HAE",
+                                "HCC",
+                                "HCI",
+                                "HCR",
+                                "HEE",
+                                "HEEQ",
+                                "HERTN",
+                                "HG",
+                                "HGI",
+                                "HGRTN",
+                                "HPC",
+                                "HPR",
+                                "HSM",
+                                "J2000",
+                                "JSM",
+                                "JSO",
+                                "KSM",
+                                "KSO",
+                                "LGM",
+                                "LocalGeographic",
+                                "LocalGeomagnetic",
+                                "MAG",
+                                "MFA",
+                                "MSO",
+                                "RTN",
+                                "SC",
+                                "SE",
+                                "SensorCoordinates",
+                                "SM",
+                                "SpacecraftOrbitPlane",
+                                "SR",
+                                "SR2",
+                                "SSE",
+                                "SSE_L",
+                                "StonyhurstHeliographic",
+                                "TIIS",
+                                "VSO",
+                                "WGS84"
+                            ],
+                            "description": "Identifiers of the origin and orientation of a set of typically orthogonal axes."
+                        }
+                    },
+                    "description": "The specification of the orientation of a set of (typically) orthogonal base axes.",
+                    "required": ["CoordinateRepresentation", "CoordinateSystemName"]
+                },
+                "CenterLatitude": {
+                    "type": "string",
+                    "description": "The latitude in the center of a region in a geographic coordinate system."
+                },
+                "NorthernmostLatitude": {
+                    "type": "string",
+                    "description": "The latitude furthest to the north in a geographic coordinate system."
+                },
+                "SouthernmostLatitude": {
+                    "type": "string",
+                    "description": "The latitude furthest to the south in a geographic coordinate system."
+                },
+                "CenterLongitude": {
+                    "type": "string",
+                    "description": "The longitude in the center of a region in a geographic coordinate system."
+                },
+                "EasternmostLongitude": {
+                    "type": "string",
+                    "description": "The longitude furthest to the east in a geographic coordinate system."
+                },
+                "WesternmostLongitude": {
+                    "type": "string",
+                    "description": "The longitude furthest to the west in a geographic coordinate system."
+                },
+                "CenterElevation": {
+                    "type": "string",
+                    "description": "The elevation in the center of a region above a surface (such as sea level or land) of a planet or natural satellite."
+                },
+                "MinimumElevation": {
+                    "type": "string",
+                    "description": "The lowest vertical elevation of region above a surface (such as sea level or land) of a planet or natural satellite."
+                },
+                "MaximumElevation": {
+                    "type": "string",
+                    "description": "The highest vertical elevation of region above a surface (such as sea level or land) of a planet or natural satellite."
+                },
+                "Acknowledgement": {
+                    "type": "string",
+                    "description": "The individual, group or organization which should be acknowledged when the data are used in or contributes to a presentation or publication."
+                },
+                "Description": {
+                    "type": "string",
+                    "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource."
+                }
+            },
+            "required": ["CoordinateSystem"]
+        },
+        "parameter": {
+            "type": "object",
+            "description": "A container of information regarding a parameter whose values are part of the product. Every product contains or can be related to one or more parameters.",
+            "properties": {
+                "Name": {
+                    "type": "string",
+                    "description": "A language unit by which a person or thing is known."
+                },
+                "Set": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A collection of items for a particular purpose."
+                },
+                "ParameterKey": {
+                    "type": "string",
+                    "description": "The name or identifier which can be used to access the parameter in the resource. The associated value is dependent on the service used to access the resource. For columnar ASCII data, use \"Column_X\" for a single-element parameter and \"Column_X-Column_Y\" for a multi-element parameter, where X and Y are the relevant column indices. The first column index is 1."
+                },
+                "Description": {
+                    "type": "string",
+                    "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource."
+                },
+                "UCD": {
+                    "type": "string",
+                    "description": "The nature of a physical parameter expressed using the IVOA UCD1+ controlled vocabulary."
+                },
+                "Caveats": {
+                    "type": "string",
+                    "description": "Information which may be important in the avoidance of the misuse of the resource, for instance instrument maladies, corruption or contamination."
+                },
+                "Cadence": {
+                    "type": "string",
+                    "format": "duration",
+                    "description": "The nominal or most common time interval between the start of successive measurements."
+                },
+                "CadenceMin": {
+                    "type": "string",
+                    "format": "duration",
+                    "description": "The smallest time interval between the start of successive measurements."
+                },
+                "CadenceMax": {
+                    "type": "string",
+                    "format": "duration",
+                    "description": "The largest time interval between the start of successive measurements."
+                },
+                "Units": {
+                    "type": "string",
+                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                },
+                "UnitsConversion": {
+                    "type": "string",
+                    "description": "The multiplicative factor for converting a unit into International System of Units (SI) units. The factor is expressed in the form \"number>x\", where \"number\" is a numerical value and \"x\" is the appropriate SI units. The basic SI units are Enumerated: m (meter), N (newton), kg (kilogram), Pa (pascal), s (second), Hz (hertz), A (ampere), V (volt), K (kelvin), W (watt), rad (radian), J (joule), sr (steradian), C (coulomb), T (tesla), ohm (ohm), mho (mho or seimens), H (henry), and F (farad). Two useful units which are not SI units are: degree (angle), and unitless (no units). An example is: \"1e-9>T\" which converts the units of magnetic field data expressed in nT to Tesla. Another example is: \"1e+3>m/s\" which converts a velocity expressed in kilometers per second to meters per second."
+                },
+                "CoordinateSystem": {
+                    "type": "object",
+                    "properties": {
+                        "CoordinateRepresentation": {
+                            "type": "string",
+                            "enum": ["Cartesian", "Cylindrical", "Spherical"],
+                            "description": "Identifiers of the method or form for specifying a given point or vector in a given coordinate system."
+                        },
+                        "CoordinateSystemName": {
+                            "type": "string",
+                            "enum": [
+                                "Carrington",
+                                "CGM",
+                                "CSO",
+                                "DM",
+                                "ECD",
+                                "ECEF",
+                                "ENP",
+                                "GEI",
+                                "GEO",
+                                "GPHIO",
+                                "GSE",
+                                "GSEQ",
+                                "GSM",
+                                "HAE",
+                                "HCC",
+                                "HCI",
+                                "HCR",
+                                "HEE",
+                                "HEEQ",
+                                "HERTN",
+                                "HG",
+                                "HGI",
+                                "HGRTN",
+                                "HPC",
+                                "HPR",
+                                "HSM",
+                                "J2000",
+                                "JSM",
+                                "JSO",
+                                "KSM",
+                                "KSO",
+                                "LGM",
+                                "LocalGeographic",
+                                "LocalGeomagnetic",
+                                "MAG",
+                                "MFA",
+                                "MSO",
+                                "RTN",
+                                "SC",
+                                "SE",
+                                "SensorCoordinates",
+                                "SM",
+                                "SpacecraftOrbitPlane",
+                                "SR",
+                                "SR2",
+                                "SSE",
+                                "SSE_L",
+                                "StonyhurstHeliographic",
+                                "TIIS",
+                                "VSO",
+                                "WGS84"
+                            ],
+                            "description": "Identifiers of the origin and orientation of a set of typically orthogonal axes."
+                        }
+                    },
+                    "description": "The specification of the orientation of a set of (typically) orthogonal base axes.",
+                    "required": ["CoordinateRepresentation", "CoordinateSystemName"]
+                },
+                "RenderingHints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/rendering"
+                    }
+                },
+                "Structure": {
+                    "type": "object",
+                    "description": "The organization and relationship of individual values within a quantity.",
+                    "properties": {
+                        "Size": {
+                            "type": "string",
+                            "pattern": "^\\s*(-?\\d+(\\s+-?\\d+)*)\\s*$",
+                            "description": "The number of elements in each dimension of a multi-dimensional array. A scalar has a size of 1. A multi-dimensional vector will have a size for each dimension. Note that the number of elements in the size of an N-dimensional array conveys array dimensionality while the product of those numbers conveys the total number of elements in the array. When size is used to describe a tensor, it is the number of elements in the tensor. As such it has a limited set of values. A tensor of rank 1 has a size of 3, rank 2 a size of 9, rank 3 a size of 27 and rank n a size of 3^n."
+                        },
+                        "Description": {
+                            "type": "string",
+                            "description": "A narrative explanation with detail appropriate for the item it describes. For example, a description of data resource should include discussions of the main quantities in the resource, possible uses and search terms. A description should also include whether any corrections (i.e., geometry, inertial) have been applied to the resource."
+                        },
+                        "Element": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/element"
+                            }
+                        }
+                    },
+                    "required": ["Size"]
+                },
+                "ValidMin": {
+                    "type": "string",
+                    "description": "The smallest legitimate value."
+                },
+                "ValidMax": {
+                    "type": "string",
+                    "description": "The largest legitimate value."
+                },
+                "FillValue": {
+                    "type": "string",
+                    "description": "A value that indicates that a quantity is undefined."
+                },
+                "Field": {
+                    "type": "object",
+                    "description": "The organization and relationship of individual values within a quantity.",
+                    "properties": {
+                        "Qualifier": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Amplitude",
+                                    "Anisotropy",
+                                    "Array",
+                                    "AutoSpectrum",
+                                    "Average",
+                                    "Characteristic",
+                                    "Circular",
+                                    "Coherence",
+                                    "Column",
+                                    "Component",
+                                    "Component.I",
+                                    "Component.J",
+                                    "Component.K",
+                                    "Confidence",
+                                    "Core",
+                                    "CrossSpectrum",
+                                    "Deviation",
+                                    "Differential",
+                                    "Direction",
+                                    "Directional",
+                                    "DirectionAngle",
+                                    "DirectionAngle.AzimuthAngle",
+                                    "DirectionAngle.ElevationAngle",
+                                    "DirectionAngle.PolarAngle",
+                                    "DirectionCosine",
+                                    "DirectionCosine.I",
+                                    "DirectionCosine.J",
+                                    "DirectionCosine.K",
+                                    "EncodedParameter",
+                                    "FieldAligned",
+                                    "Fit",
+                                    "Group",
+                                    "Halo",
+                                    "ImaginaryPart",
+                                    "Incident",
+                                    "Integral",
+                                    "Integral.Area",
+                                    "Integral.Bandwidth",
+                                    "Integral.SolidAngle",
+                                    "Linear",
+                                    "LineOfSight",
+                                    "Magnitude",
+                                    "MassMixingRatio",
+                                    "Maximum",
+                                    "Median",
+                                    "Minimum",
+                                    "MixingRatio",
+                                    "Moment",
+                                    "Parallel",
+                                    "Peak",
+                                    "Perpendicular",
+                                    "Perturbation",
+                                    "Phase",
+                                    "PhaseAngle",
+                                    "PowerSpectralDensity",
+                                    "Projection",
+                                    "Projection.IJ",
+                                    "Projection.IK",
+                                    "Projection.JK",
+                                    "Pseudo",
+                                    "Ratio",
+                                    "RealPart",
+                                    "Scalar",
+                                    "Spectral",
+                                    "StandardDeviation",
+                                    "StokesParameters",
+                                    "Strahl",
+                                    "Superhalo",
+                                    "Symmetric",
+                                    "Tensor",
+                                    "Total",
+                                    "Trace",
+                                    "Uncertainty",
+                                    "Variance",
+                                    "Vector"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                        },
+                        "FieldQuantity": {
+                            "type": "string",
+                            "enum": [
+                                "Current",
+                                "CurrentDensity",
+                                "Electric",
+                                "Electromagnetic",
+                                "Gyrofrequency",
+                                "Magnetic",
+                                "PlasmaFrequency",
+                                "Potential",
+                                "PoyntingFlux"
+                            ],
+                            "description": "Identifiers for the physical attribute of the field."
+                        },
+                        "FrequencyRange": {
+                            "type": "object",
+                            "properties": {
+                                "SpectralRange": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": ["CaK",
+                                            "ExtremeUltraviolet",
+                                            "FarUltraviolet",
+                                            "GammaRays",
+                                            "Halpha",
+                                            "HardXRays",
+                                            "He10830",
+                                            "He304",
+                                            "Infrared",
+                                            "K7699",
+                                            "LBHBand",
+                                            "Microwave",
+                                            "NaD",
+                                            "Ni6768",
+                                            "Optical",
+                                            "RadioFrequency",
+                                            "SoftXRays",
+                                            "Ultraviolet",
+                                            "WhiteLight",
+                                            "XRays"]
+                                    },
+                                    "uniqueItems": true,
+                                    "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
+                                },
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible values for the observed frequency.",
+                            "required": ["Low", "High", "Units"]
+                        }
+                    },
+                    "required": ["FieldQuantity"]
+                },
+                "Particle": {
+                    "type": "object",
+                    "properties": {
+                        "ParticleType": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Aerosol",
+                                    "AlphaParticle",
+                                    "Atom",
+                                    "Dust",
+                                    "Electron",
+                                    "Ion",
+                                    "Molecule",
+                                    "Muon",
+                                    "Neutron",
+                                    "Positron",
+                                    "Proton"
+                                ]
+                            },
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "description": "Identifiers for the characterization of the kind of particle observed by the measurement."
+                        },
+                        "Qualifier": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Amplitude",
+                                    "Anisotropy",
+                                    "Array",
+                                    "AutoSpectrum",
+                                    "Average",
+                                    "Characteristic",
+                                    "Circular",
+                                    "Coherence",
+                                    "Column",
+                                    "Component",
+                                    "Component.I",
+                                    "Component.J",
+                                    "Component.K",
+                                    "Confidence",
+                                    "Core",
+                                    "CrossSpectrum",
+                                    "Deviation",
+                                    "Differential",
+                                    "Direction",
+                                    "Directional",
+                                    "DirectionAngle",
+                                    "DirectionAngle.AzimuthAngle",
+                                    "DirectionAngle.ElevationAngle",
+                                    "DirectionAngle.PolarAngle",
+                                    "DirectionCosine",
+                                    "DirectionCosine.I",
+                                    "DirectionCosine.J",
+                                    "DirectionCosine.K",
+                                    "EncodedParameter",
+                                    "FieldAligned",
+                                    "Fit",
+                                    "Group",
+                                    "Halo",
+                                    "ImaginaryPart",
+                                    "Incident",
+                                    "Integral",
+                                    "Integral.Area",
+                                    "Integral.Bandwidth",
+                                    "Integral.SolidAngle",
+                                    "Linear",
+                                    "LineOfSight",
+                                    "Magnitude",
+                                    "MassMixingRatio",
+                                    "Maximum",
+                                    "Median",
+                                    "Minimum",
+                                    "MixingRatio",
+                                    "Moment",
+                                    "Parallel",
+                                    "Peak",
+                                    "Perpendicular",
+                                    "Perturbation",
+                                    "Phase",
+                                    "PhaseAngle",
+                                    "PowerSpectralDensity",
+                                    "Projection",
+                                    "Projection.IJ",
+                                    "Projection.IK",
+                                    "Projection.JK",
+                                    "Pseudo",
+                                    "Ratio",
+                                    "RealPart",
+                                    "Scalar",
+                                    "Spectral",
+                                    "StandardDeviation",
+                                    "StokesParameters",
+                                    "Strahl",
+                                    "Superhalo",
+                                    "Symmetric",
+                                    "Tensor",
+                                    "Total",
+                                    "Trace",
+                                    "Uncertainty",
+                                    "Variance",
+                                    "Vector"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                        },
+                        "ParticleQuantity": {
+                            "type": "string",
+                            "enum": [
+                                "AdiabaticInvariant",
+                                "AdiabaticInvariant.BounceMotion",
+                                "AdiabaticInvariant.DriftMotion",
+                                "AdiabaticInvariant.MagneticMotion",
+                                "ArrivalDirection",
+                                "AtomicNumberDetected",
+                                "AverageChargeState",
+                                "ChargeFlux",
+                                "ChargeState",
+                                "CountRate",
+                                "Counts",
+                                "Current",
+                                "CurrentDensity",
+                                "DynamicPressure",
+                                "Energy",
+                                "EnergyDensity",
+                                "EnergyFlux",
+                                "EnergyPerCharge",
+                                "Entropy",
+                                "FlowSpeed",
+                                "FlowVelocity",
+                                "Fluence",
+                                "GeometricFactor",
+                                "Gyrofrequency",
+                                "HeatFlux",
+                                "LShell",
+                                "Mass",
+                                "MassDensity",
+                                "MassNumber",
+                                "MassPerCharge",
+                                "NumberDensity",
+                                "NumberFlux",
+                                "ParticleRadius",
+                                "ParticleRigidity",
+                                "PhaseSpaceDensity",
+                                "PlasmaFrequency",
+                                "Pressure",
+                                "SonicMachNumber",
+                                "SoundSpeed",
+                                "Temperature",
+                                "ThermalSpeed",
+                                "Velocity"
+                            ],
+                            "description": "Identifiers for the characterization of the physical properties of the particle."
+                        },
+                        "AtomicNumber": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            },
+                            "description": "The number of protons in the nucleus of an atom.",
+                            "uniqueItems": true
+                        },
+                        "EnergyRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The minimum and maximum energy values of the particles represented by a given physical parameter description.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "AzimuthalAngleRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible azimuthal angles for a group of energy observations. Default units are degrees.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "PolarAngleRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible polar angles for a group of energy observations. Defaults units are degrees.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "MassRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible mass for a group of particle observations.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "PitchAngleRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible pitch angles for a group of particle observations.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "ChemicalFormula": {
+                            "type": "string",
+                            "description": "Chemical formula representing a population of particle."
+                        },
+                        "Population": {
+                            "type": "string",
+                            "description": "A concise description of a particle population, for references."
+                        },
+                        "PopulationMassNumber": {
+                            "type": "string",
+                            "description": "The total number of protons and neutrons (together known as nucleons) in an atomic nucleus."
+                        },
+                        "PopulationChargeState": {
+                            "type": "number",
+                            "description": "Charge of a particle in a population, in units of the charge of a proton. Charge state of a bare proton is equal to one."
+                        },
+                        "SourceRegion": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The apparent region of space from which a particular type of observed electromagnetic or particle radiation appears to have originated.",
+                            "uniqueItems": true
+                        },
+                        "SourceRegionExtent": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The observational size of a remote source of radiation (electromagnetic waves or particles). It is typically expressed in angular width (full or half width), or in solid angle, subtended at the observing point. SourceRegionExtent should be accompanied by the description of source direction (see Direction under Qualifier).",
+                            "uniqueItems": true
+                        }
+                    },
+                    "description": "A description of the types of particles observed in the measurement. This includes both direct observations and inferred observations.",
+                    "required": ["ParticleType", "ParticleQuantity"]
+                },
+                "Wave": {
+                    "type": "object",
+                    "properties": {
+                        "WaveType": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Electromagnetic",
+                                    "Electrostatic",
+                                    "Hydrodynamic",
+                                    "MHD",
+                                    "Photon",
+                                    "PlasmaWaves"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for the carrier or phenomenum of wave information observed by the measurement."
+                        },
+                        "Qualifier": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Amplitude",
+                                    "Anisotropy",
+                                    "Array",
+                                    "AutoSpectrum",
+                                    "Average",
+                                    "Characteristic",
+                                    "Circular",
+                                    "Coherence",
+                                    "Column",
+                                    "Component",
+                                    "Component.I",
+                                    "Component.J",
+                                    "Component.K",
+                                    "Confidence",
+                                    "Core",
+                                    "CrossSpectrum",
+                                    "Deviation",
+                                    "Differential",
+                                    "Direction",
+                                    "Directional",
+                                    "DirectionAngle",
+                                    "DirectionAngle.AzimuthAngle",
+                                    "DirectionAngle.ElevationAngle",
+                                    "DirectionAngle.PolarAngle",
+                                    "DirectionCosine",
+                                    "DirectionCosine.I",
+                                    "DirectionCosine.J",
+                                    "DirectionCosine.K",
+                                    "EncodedParameter",
+                                    "FieldAligned",
+                                    "Fit",
+                                    "Group",
+                                    "Halo",
+                                    "ImaginaryPart",
+                                    "Incident",
+                                    "Integral",
+                                    "Integral.Area",
+                                    "Integral.Bandwidth",
+                                    "Integral.SolidAngle",
+                                    "Linear",
+                                    "LineOfSight",
+                                    "Magnitude",
+                                    "MassMixingRatio",
+                                    "Maximum",
+                                    "Median",
+                                    "Minimum",
+                                    "MixingRatio",
+                                    "Moment",
+                                    "Parallel",
+                                    "Peak",
+                                    "Perpendicular",
+                                    "Perturbation",
+                                    "Phase",
+                                    "PhaseAngle",
+                                    "PowerSpectralDensity",
+                                    "Projection",
+                                    "Projection.IJ",
+                                    "Projection.IK",
+                                    "Projection.JK",
+                                    "Pseudo",
+                                    "Ratio",
+                                    "RealPart",
+                                    "Scalar",
+                                    "Spectral",
+                                    "StandardDeviation",
+                                    "StokesParameters",
+                                    "Strahl",
+                                    "Superhalo",
+                                    "Symmetric",
+                                    "Tensor",
+                                    "Total",
+                                    "Trace",
+                                    "Uncertainty",
+                                    "Variance",
+                                    "Vector"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                        },
+                        "WaveQuantity": {
+                            "type": "string",
+                            "enum": [
+                                "Absorption",
+                                "ACElectricField",
+                                "ACMagneticField",
+                                "Albedo",
+                                "DopplerFrequency",
+                                "Emissivity",
+                                "EnergyFlux",
+                                "EquivalentWidth",
+                                "Frequency",
+                                "Gyrofrequency",
+                                "Intensity",
+                                "LineDepth",
+                                "LowerHybridFrequency",
+                                "MagneticField",
+                                "ModeAmplitude",
+                                "PlasmaFrequency",
+                                "Polarization",
+                                "PoyntingFlux",
+                                "PropagationTime",
+                                "StokesParameters",
+                                "UpperHybridFrequency",
+                                "Velocity",
+                                "VolumeEmissionRate",
+                                "Wavelength",
+                                "WavePhase"
+                            ],
+                            "description": "Identifiers for the characterization of the physical properties of a wave."
+                        },
+                        "EnergyRange": {
+                            "type": "object",
+                            "properties": {
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The minimum and maximum energy values of the particles represented by a given physical parameter description.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "FrequencyRange": {
+                            "type": "object",
+                            "properties": {
+                                "SpectralRange": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": ["CaK",
+                                            "ExtremeUltraviolet",
+                                            "FarUltraviolet",
+                                            "GammaRays",
+                                            "Halpha",
+                                            "HardXRays",
+                                            "He10830",
+                                            "He304",
+                                            "Infrared",
+                                            "K7699",
+                                            "LBHBand",
+                                            "Microwave",
+                                            "NaD",
+                                            "Ni6768",
+                                            "Optical",
+                                            "RadioFrequency",
+                                            "SoftXRays",
+                                            "Ultraviolet",
+                                            "WhiteLight",
+                                            "XRays"]
+                                    },
+                                    "uniqueItems": true,
+                                    "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
+                                },
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible values for the observed frequency.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "WavelengthRange": {
+                            "type": "object",
+                            "properties": {
+                                "SpectralRange": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": ["CaK",
+                                            "ExtremeUltraviolet",
+                                            "FarUltraviolet",
+                                            "GammaRays",
+                                            "Halpha",
+                                            "HardXRays",
+                                            "He10830",
+                                            "He304",
+                                            "Infrared",
+                                            "K7699",
+                                            "LBHBand",
+                                            "Microwave",
+                                            "NaD",
+                                            "Ni6768",
+                                            "Optical",
+                                            "RadioFrequency",
+                                            "SoftXRays",
+                                            "Ultraviolet",
+                                            "WhiteLight",
+                                            "XRays"]
+                                    },
+                                    "uniqueItems": true,
+                                    "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
+                                },
+                                "Low": {
+                                    "type": "number",
+                                    "description": "The smallest value within a range of possible values."
+                                },
+                                "High": {
+                                    "type": "number",
+                                    "description": "The largest value within a range of possible values."
+                                },
+                                "Units": {
+                                    "type": "string",
+                                    "description": "A description of the standardized measurement increments in which a value is specified. The description is represented as a mathematical phrase. Units should be represented by widely accepted representation. For example, units should conform to the International System of Units (SI) which is maintained by BIPM (Bureau International des Poids et Mesures (see links listed in the Bibliography) when appropriate or use tokens like R<sub>E</sub> to represent units of the Radius of the Earth. Within a phrase the circumflex (^) is used to indicate a power, a star (*) is used to indicate multiplication and a slash (/) division. When symbols are not separated by a mathematical operator, multiplication is assumed."
+                                },
+                                "Bin": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/bin"
+                                    }
+                                }
+                            },
+                            "description": "The range of possible values for the observed wavelength.",
+                            "required": ["Low", "High", "Units"]
+                        },
+                        "SourceRegion": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The apparent region of space from which a particular type of observed electromagnetic or particle radiation appears to have originated.",
+                            "uniqueItems": true
+                        },
+                        "SourceRegionExtent": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "The observational size of a remote source of radiation (electromagnetic waves or particles). It is typically expressed in angular width (full or half width), or in solid angle, subtended at the observing point. SourceRegionExtent should be accompanied by the description of source direction (see Direction under Qualifier).",
+                            "uniqueItems": true
+                        }
+                    },
+                    "description": "Periodic or quasi-periodic (AC) variations of physical quantities in time and space, capable of propagating or being trapped within particular regimes.",
+                    "required": ["WaveQuantity"]
+                },
+                "Mixed": {
+                    "type": "object",
+                    "properties": {
+                        "MixedQuantity": {
+                            "type": "string",
+                            "enum": [
+                                "AkasofuEpsilon",
+                                "AlfvenMachNumber",
+                                "AlfvenVelocity",
+                                "FrequencyToGyrofrequencyRatio",
+                                "IMFClockAngle",
+                                "MagnetosonicMachNumber",
+                                "Other",
+                                "PlasmaBeta",
+                                "SolarUVFlux",
+                                "TotalPressure",
+                                "VCrossB"
+                            ],
+                            "description": "Identifiers for the combined attributes of a mixed parameter quantity."
+                        },
+                        "ParticleType": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Aerosol",
+                                    "AlphaParticle",
+                                    "Atom",
+                                    "Dust",
+                                    "Electron",
+                                    "Ion",
+                                    "Molecule",
+                                    "Muon",
+                                    "Neutron",
+                                    "Positron",
+                                    "Proton"
+                                ]
+                            },
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "description": "Identifiers for the characterization of the kind of particle observed by the measurement."
+                        },
+                        "Qualifier": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Amplitude",
+                                    "Anisotropy",
+                                    "Array",
+                                    "AutoSpectrum",
+                                    "Average",
+                                    "Characteristic",
+                                    "Circular",
+                                    "Coherence",
+                                    "Column",
+                                    "Component",
+                                    "Component.I",
+                                    "Component.J",
+                                    "Component.K",
+                                    "Confidence",
+                                    "Core",
+                                    "CrossSpectrum",
+                                    "Deviation",
+                                    "Differential",
+                                    "Direction",
+                                    "Directional",
+                                    "DirectionAngle",
+                                    "DirectionAngle.AzimuthAngle",
+                                    "DirectionAngle.ElevationAngle",
+                                    "DirectionAngle.PolarAngle",
+                                    "DirectionCosine",
+                                    "DirectionCosine.I",
+                                    "DirectionCosine.J",
+                                    "DirectionCosine.K",
+                                    "EncodedParameter",
+                                    "FieldAligned",
+                                    "Fit",
+                                    "Group",
+                                    "Halo",
+                                    "ImaginaryPart",
+                                    "Incident",
+                                    "Integral",
+                                    "Integral.Area",
+                                    "Integral.Bandwidth",
+                                    "Integral.SolidAngle",
+                                    "Linear",
+                                    "LineOfSight",
+                                    "Magnitude",
+                                    "MassMixingRatio",
+                                    "Maximum",
+                                    "Median",
+                                    "Minimum",
+                                    "MixingRatio",
+                                    "Moment",
+                                    "Parallel",
+                                    "Peak",
+                                    "Perpendicular",
+                                    "Perturbation",
+                                    "Phase",
+                                    "PhaseAngle",
+                                    "PowerSpectralDensity",
+                                    "Projection",
+                                    "Projection.IJ",
+                                    "Projection.IK",
+                                    "Projection.JK",
+                                    "Pseudo",
+                                    "Ratio",
+                                    "RealPart",
+                                    "Scalar",
+                                    "Spectral",
+                                    "StandardDeviation",
+                                    "StokesParameters",
+                                    "Strahl",
+                                    "Superhalo",
+                                    "Symmetric",
+                                    "Tensor",
+                                    "Total",
+                                    "Trace",
+                                    "Uncertainty",
+                                    "Variance",
+                                    "Vector"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                        }
+                    },
+                    "description": "A parameter derived from more than one type of parameter. For example, plasma beta, the ratio of plasma particle energy density to the energy density of the magnetic field permeating the plasma, is mixed.",
+                    "required": ["MixedQuantity"]
+                },
+                "Support": {
+                    "type": "object",
+                    "properties": {
+                        "Qualifier": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "Amplitude",
+                                    "Anisotropy",
+                                    "Array",
+                                    "AutoSpectrum",
+                                    "Average",
+                                    "Characteristic",
+                                    "Circular",
+                                    "Coherence",
+                                    "Column",
+                                    "Component",
+                                    "Component.I",
+                                    "Component.J",
+                                    "Component.K",
+                                    "Confidence",
+                                    "Core",
+                                    "CrossSpectrum",
+                                    "Deviation",
+                                    "Differential",
+                                    "Direction",
+                                    "Directional",
+                                    "DirectionAngle",
+                                    "DirectionAngle.AzimuthAngle",
+                                    "DirectionAngle.ElevationAngle",
+                                    "DirectionAngle.PolarAngle",
+                                    "DirectionCosine",
+                                    "DirectionCosine.I",
+                                    "DirectionCosine.J",
+                                    "DirectionCosine.K",
+                                    "EncodedParameter",
+                                    "FieldAligned",
+                                    "Fit",
+                                    "Group",
+                                    "Halo",
+                                    "ImaginaryPart",
+                                    "Incident",
+                                    "Integral",
+                                    "Integral.Area",
+                                    "Integral.Bandwidth",
+                                    "Integral.SolidAngle",
+                                    "Linear",
+                                    "LineOfSight",
+                                    "Magnitude",
+                                    "MassMixingRatio",
+                                    "Maximum",
+                                    "Median",
+                                    "Minimum",
+                                    "MixingRatio",
+                                    "Moment",
+                                    "Parallel",
+                                    "Peak",
+                                    "Perpendicular",
+                                    "Perturbation",
+                                    "Phase",
+                                    "PhaseAngle",
+                                    "PowerSpectralDensity",
+                                    "Projection",
+                                    "Projection.IJ",
+                                    "Projection.IK",
+                                    "Projection.JK",
+                                    "Pseudo",
+                                    "Ratio",
+                                    "RealPart",
+                                    "Scalar",
+                                    "Spectral",
+                                    "StandardDeviation",
+                                    "StokesParameters",
+                                    "Strahl",
+                                    "Superhalo",
+                                    "Symmetric",
+                                    "Tensor",
+                                    "Total",
+                                    "Trace",
+                                    "Uncertainty",
+                                    "Variance",
+                                    "Vector"
+                                ]
+                            },
+                            "uniqueItems": true,
+                            "description": "Identifiers for terms which refine the type or attribute of a quantity."
+                        },
+                        "SupportQuantity": {
+                            "type": "string",
+                            "enum": [
+                                "DataQuality",
+                                "Housekeeping",
+                                "InstrumentMode",
+                                "Orientation",
+                                "Other",
+                                "Positional",
+                                "Remark",
+                                "RotationMatrix",
+                                "SpinPeriod",
+                                "SpinPhase",
+                                "SpinRate",
+                                "Telemetry",
+                                "Temporal",
+                                "Velocity",
+                                "WebResource",
+                                "WebService"
+                            ],
+                            "description": "Identifiers for the information useful in understanding the context of an observation, typically observed or measured coincidentally with a physical observation."
+                        }
+                    },
+                    "description": "Information useful in understanding the context of an observation, typically observed or measured coincidentally with a physical observation.",
+                    "required": ["SupportQuantity"]
+                },
+                "SpatialCoverage": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/spatial"
+                    }
+                },
+            "required": ["Name"],
+            "oneOf": [
+                { "required": ["Field"] },
+                { "required": ["Particle"] },
+                { "required": ["Wave"] },
+                { "required": ["Mixed"] },
+                { "required": ["Support"] }]
+            }
+        },
+        "rendering": {
+            "type": "object",
+            "description": "Attributes to aid in the rendering of parameter.",
+            "properties": {
+                "DisplayType": {
+                    "type": "string",
+                    "enum": [
+                        "Image",
+                        "Plasmagram",
+                        "Spectrogram",
+                        "StackPlot",
+                        "TimeSeries",
+                        "WaveForm"],
+                    "description": "Identifiers for types or classes of rendered data."
+                },
+                "AxisLabel": {
+                    "type": "string",
+                    "description": "A short character string (approximately 10 characters, but preferably 6 characters, more only if absolutely required for clarity) which can be used to label a y-axis for a plot or to provide a heading for a data listing."
+                },
+                "RenderingAxis": {
+                    "type": "string",
+                    "enum": [
+                        "ColorBar",
+                        "Horizontal",
+                        "Vertical"],
+                    "description": "Identifiers for the reference component of a plot or rendering of data."
+                },
+                "Index": {
+                    "type": "string",
+                    "pattern": "^\\s*(-?\\d+(\\s+-?\\d+)*)\\s*$",
+                    "description": "The location of an item in an array or vector. An index can be multivalued to represent the location in a multi-dimensional object. The index of the first item is \"1\". A value of \"0\" is a wild card for all elements at the location in an array. A value of \"-1\" is a reference to the dimension at the location in the array. A \"-1\" is used when describing the attributes of the dimension, whereas \"0\" or a positive integer is used to describe attributes of individual elements."
+                },
+                "ValueFormat": {
+                    "type": "string",
+                    "description": "A string defining the output format used when extracting data values out to a file or screen. The magnitude and the number of significant figures needed should be carefully considered. The output format string can be in either Fortran or C syntax."
+                },
+                "ScaleMin": {
+                    "type": "number",
+                    "description": "The minimum value that the variable is expected to attain. Used, for example, by automated plotting software."
+                },
+                "ScaleMax": {
+                    "type": "number",
+                    "description": "The maximum value that the variable is expected to attain. Used, for example, by automated plotting software."
+                },
+                "ScaleType": {
+                    "type": "string",
+                    "enum": ["LinearScale", "LogScale"],
+                    "description": "Identifiers for scaling applied to a set of numbers."
+                }
+            }
+        }
+    }
+}

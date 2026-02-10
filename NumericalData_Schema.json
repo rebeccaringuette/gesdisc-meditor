@@ -538,17 +538,19 @@
             "type": "object",
             "description": "A history of changes that improve or upgrade.",
             "properties": {
-                "ReleaseDate": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "The date and time when a SPASE resource is made available. The availability of a resource coincides with the release of a resource description. If the Release Date is specified as a future date, then it indicates that resource should not be made available until that time. However, this is only advisory and in practice the Release Date should be the actual date the resource description was published."
+                "RevisionEvent": {
+                    "ReleaseDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The date and time when a SPASE resource is made available. The availability of a resource coincides with the release of a resource description. If the Release Date is specified as a future date, then it indicates that resource should not be made available until that time. However, this is only advisory and in practice the Release Date should be the actual date the resource description was published."
+                    },
+                    "Note": {
+                        "type": "string",
+                        "description": "Information which is useful or important for the understanding of a value or parameter."
+                    }
                 },
-                "Note": {
-                    "type": "string",
-                    "description": "Information which is useful or important for the understanding of a value or parameter."
-                }
-            },
-            "required": ["ReleaseDate", "Note"]
+                "required": ["ReleaseDate", "Note"]
+            }
         },
         "element": {
             "type": "object",
@@ -684,10 +686,16 @@
         "extension": {
             "type": "object",
             "properties": {
+                "@lang": {
+                    "type": "string",
+                    "default": "en",
+                    "description": "The two-character indicator of language selected from the ISO 639-1 codes for the representation of names of languages."
+                },
                 "anything": {
                     "type": ["string", "number", "boolean", "object", "array", "null"]
                 }
             },
+            "required": ["@lang"],
             "description": "A container of other metadata which is not part of the SPASE data model. The contents of this element are defined by individual usage. The organization and content are constrained by the implementation. For example, in an XML representation of the SPASE metadata the content must conform to the XML specifications."
         },
         "funder": {
@@ -747,7 +755,7 @@
                     "description": "Uniform Resource Locator (URL) is the global address of documents and other resources on the World Wide Web. The first part of the address indicates what protocol to use, and the second part specifies the IP address or the domain name where the resource is located followed by the pathname of the resource. A URL is specified in the form protocol://server.domain.name:port/pathname. Example protocols are HTTP or FTP, server domain name is the Internet name."
                 },
                 "Style": {
-                    "type": "array",
+                    "type": "string",
                     "items": {
                         "type": "string",
                         "enum": ["EPNTAP", "File", "Git", "HAPI", "Listing", "Overview", "Search", "TAP", "Template", "WebService"]
@@ -859,7 +867,6 @@
                             "XML"
                         ]
                     },
-                    "minItems": 1,
                     "uniqueItems": true,
                     "description": "The file format specification. The value is selected from a list of accepted names for known, well documented formats."
                 },
@@ -958,7 +965,6 @@
                                             "User"
                                         ]
                                 },
-                                "minItems": 1,
                                 "uniqueItems": true,
                                 "description": "The assigned or assumed function or position of an individual."
                             },
@@ -1405,30 +1411,28 @@
                             "type": "object",
                             "properties": {
                                 "SpectralRange": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": ["CaK",
-                                            "ExtremeUltraviolet",
-                                            "FarUltraviolet",
-                                            "GammaRays",
-                                            "Halpha",
-                                            "HardXRays",
-                                            "He10830",
-                                            "He304",
-                                            "Infrared",
-                                            "K7699",
-                                            "LBHBand",
-                                            "Microwave",
-                                            "NaD",
-                                            "Ni6768",
-                                            "Optical",
-                                            "RadioFrequency",
-                                            "SoftXRays",
-                                            "Ultraviolet",
-                                            "WhiteLight",
-                                            "XRays"]
-                                    },
+                                    "type": "string",
+                                    "enum": ["CaK",
+                                        "ExtremeUltraviolet",
+                                        "FarUltraviolet",
+                                        "GammaRays",
+                                        "Halpha",
+                                        "HardXRays",
+                                        "He10830",
+                                        "He304",
+                                        "Infrared",
+                                        "K7699",
+                                        "LBHBand",
+                                        "Microwave",
+                                        "NaD",
+                                        "Ni6768",
+                                        "Optical",
+                                        "RadioFrequency",
+                                        "SoftXRays",
+                                        "Ultraviolet",
+                                        "WhiteLight",
+                                        "XRays"
+                                    ],
                                     "uniqueItems": true,
                                     "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
                                 },
@@ -1478,7 +1482,6 @@
                                     "Proton"
                                 ]
                             },
-                            "minItems": 1,
                             "uniqueItems": true,
                             "description": "Identifiers for the characterization of the kind of particle observed by the measurement."
                         },
@@ -1788,19 +1791,15 @@
                     "type": "object",
                     "properties": {
                         "WaveType": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "Electromagnetic",
-                                    "Electrostatic",
-                                    "Hydrodynamic",
-                                    "MHD",
-                                    "Photon",
-                                    "PlasmaWaves"
-                                ]
-                            },
-                            "uniqueItems": true,
+                            "type": "string",
+                            "enum": [
+                                "Electromagnetic",
+                                "Electrostatic",
+                                "Hydrodynamic",
+                                "MHD",
+                                "Photon",
+                                "PlasmaWaves"
+                            ],
                             "description": "Identifiers for the carrier or phenomenum of wave information observed by the measurement."
                         },
                         "Qualifier": {
@@ -1948,31 +1947,28 @@
                             "type": "object",
                             "properties": {
                                 "SpectralRange": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": ["CaK",
-                                            "ExtremeUltraviolet",
-                                            "FarUltraviolet",
-                                            "GammaRays",
-                                            "Halpha",
-                                            "HardXRays",
-                                            "He10830",
-                                            "He304",
-                                            "Infrared",
-                                            "K7699",
-                                            "LBHBand",
-                                            "Microwave",
-                                            "NaD",
-                                            "Ni6768",
-                                            "Optical",
-                                            "RadioFrequency",
-                                            "SoftXRays",
-                                            "Ultraviolet",
-                                            "WhiteLight",
-                                            "XRays"]
-                                    },
-                                    "uniqueItems": true,
+                                    "type": "string",
+                                    "enum": ["CaK",
+                                        "ExtremeUltraviolet",
+                                        "FarUltraviolet",
+                                        "GammaRays",
+                                        "Halpha",
+                                        "HardXRays",
+                                        "He10830",
+                                        "He304",
+                                        "Infrared",
+                                        "K7699",
+                                        "LBHBand",
+                                        "Microwave",
+                                        "NaD",
+                                        "Ni6768",
+                                        "Optical",
+                                        "RadioFrequency",
+                                        "SoftXRays",
+                                        "Ultraviolet",
+                                        "WhiteLight",
+                                        "XRays"
+                                    ],
                                     "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
                                 },
                                 "Low": {
@@ -2001,31 +1997,28 @@
                             "type": "object",
                             "properties": {
                                 "SpectralRange": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": ["CaK",
-                                            "ExtremeUltraviolet",
-                                            "FarUltraviolet",
-                                            "GammaRays",
-                                            "Halpha",
-                                            "HardXRays",
-                                            "He10830",
-                                            "He304",
-                                            "Infrared",
-                                            "K7699",
-                                            "LBHBand",
-                                            "Microwave",
-                                            "NaD",
-                                            "Ni6768",
-                                            "Optical",
-                                            "RadioFrequency",
-                                            "SoftXRays",
-                                            "Ultraviolet",
-                                            "WhiteLight",
-                                            "XRays"]
-                                    },
-                                    "uniqueItems": true,
+                                    "type": "string",
+                                    "enum": ["CaK",
+                                        "ExtremeUltraviolet",
+                                        "FarUltraviolet",
+                                        "GammaRays",
+                                        "Halpha",
+                                        "HardXRays",
+                                        "He10830",
+                                        "He304",
+                                        "Infrared",
+                                        "K7699",
+                                        "LBHBand",
+                                        "Microwave",
+                                        "NaD",
+                                        "Ni6768",
+                                        "Optical",
+                                        "RadioFrequency",
+                                        "SoftXRays",
+                                        "Ultraviolet",
+                                        "WhiteLight",
+                                        "XRays"
+                                    ],
                                     "description": "Identifiers for names associated with wavelengths. Based on the ISO 21348 Solar Irradiance Standard. Additions have been made to extend the frequency ranges to include those used in space physics. Those additions are indicated in blue text. The \"Total Solar Irradiance\" category has not been included since it is a type of measurement and not a specific spectral range. See Appendix A: Comparison of Spectrum Domains for a comparison of the spectral ranges with other systems."
                                 },
                                 "Low": {
@@ -2108,7 +2101,6 @@
                                     "Proton"
                                 ]
                             },
-                            "minItems": 1,
                             "uniqueItems": true,
                             "description": "Identifiers for the characterization of the kind of particle observed by the measurement."
                         },
@@ -2322,7 +2314,7 @@
                     }
                 },
             "required": ["Name"],
-            "oneOf": [
+            "anyOf": [
                 { "required": ["Field"] },
                 { "required": ["Particle"] },
                 { "required": ["Wave"] },

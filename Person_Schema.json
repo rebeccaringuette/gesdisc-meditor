@@ -87,9 +87,30 @@
                 "type": "string"
             },
             "description": "The assigned Research Organization Registry (ROR) identifier, see https://ror.org/."
+        },
+        "Extension": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/extension"
+            }
         }
     },
     "$defs": {
+        "extension": {
+            "type": "object",
+            "properties": {
+                "@lang": {
+                    "type": "string",
+                    "default": "en",
+                    "description": "The two-character indicator of language selected from the ISO 639-1 codes for the representation of names of languages."
+                },
+                "anything": {
+                    "type": ["string", "number", "boolean", "object", "array", "null"]
+                }
+            },
+            "required": ["@lang"],
+            "description": "A container of other metadata which is not part of the SPASE data model. The contents of this element are defined by individual usage. The organization and content are constrained by the implementation. For example, in an XML representation of the SPASE metadata the content must conform to the XML specifications."
+        },
         "rights": {
             "type": "object",
             "description": "Any rights information for this item. This property may be repeated to record complex rights characteristics for the same item. May be used for both metadata and dataset licenses.",

@@ -3,6 +3,7 @@
     "$id": "https://disc.gsfc.nasa.gov/schemas/model.json",
     "type": "object",
     "required": ["Version", "ResourceID", "ResourceHeader", "AccessInformation", "MeasurementType"],
+    "additionalProperties": false,
     "properties": {
         "Version": {
             "type": "string",
@@ -486,12 +487,7 @@
                 "$ref": "#/$defs/parameter"
             }
         },
-        "Extension": {
-            "type": "array",
-            "items": {
-                "$ref": "#/$defs/extension"
-            }
-        }
+        "Extension": {}
     },
     "$defs": {
         "association": {
@@ -682,21 +678,6 @@
                 },
             "required": ["Name", "Index"]
             }
-        },
-        "extension": {
-            "type": "object",
-            "properties": {
-                "@lang": {
-                    "type": "string",
-                    "default": "en",
-                    "description": "The two-character indicator of language selected from the ISO 639-1 codes for the representation of names of languages."
-                },
-                "anything": {
-                    "type": ["string", "number", "boolean", "object", "array", "null"]
-                }
-            },
-            "required": ["@lang"],
-            "description": "A container of other metadata which is not part of the SPASE data model. The contents of this element are defined by individual usage. The organization and content are constrained by the implementation. For example, in an XML representation of the SPASE metadata the content must conform to the XML specifications."
         },
         "funder": {
             "type": "object",
@@ -2314,7 +2295,7 @@
                     }
                 },
             "required": ["Name"],
-            "anyOf": [
+            "oneOf": [
                 { "required": ["Field"] },
                 { "required": ["Particle"] },
                 { "required": ["Wave"] },
